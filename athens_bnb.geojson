@@ -1,0 +1,88 @@
+﻿{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "My Airbnb",
+        "description": "The Airbnb I booked for my trip"
+      },
+      "geometry": {
+        "coordinates": [
+          23.7370348,
+          37.98463566
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "",
+        "description": ""
+      },
+      "geometry": {
+        "coordinates": [
+         
+         23.729566,37.977553
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "k-nearest Airbnb",
+        "description": ""
+      },
+      "geometry": {
+        "coordinates": [
+
+         23.730211, 37.976260
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "k-nearest Airbnb",
+        "description": ""
+      },
+      "geometry": {
+        "coordinates": [
+         23.729900, 37.976130
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "k-nearest Airbnb",
+        "description": ""
+      },
+      "geometry": {
+        "coordinates": [
+
+         23.734584,37.986634
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "title": "k-nearest Airbnb",
+        "description": ""
+      },
+      "geometry": {
+        "coordinates": [
+         
+        23.739274, 37.984459
+        ],
+        "type": "Point"
+      }
+    }
+  ],
+  "type": "FeatureCollection"
+}
