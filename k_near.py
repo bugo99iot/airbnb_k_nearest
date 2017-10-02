@@ -14,7 +14,21 @@ with open('cities_dictionary.json') as json_data:
 city = "ATHENS"
 
 #upload data
-city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+try:
+    city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+except Exception:
+    if city == "HONG KONG":
+        city = "HK"
+        city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+        city = "HONG KONG"
+    if city == "LOS ANGELES":
+        city = "LA"
+        city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+        city = "LOS ANGELES"
+    if city == "SAN FRANCISCO":
+        city = "SF"
+        city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+        city = "SAN FRANCISCO"
 
 #select relevant columns from the data
 city_listings = city_listings[columns]
@@ -67,25 +81,14 @@ for items in columns[1:]:
 N_my_property_df=my_property_df[N_columns[1:]]
 
 
-#Y = distance.euclidean([1,0,4], [5,0,6])
-#print("Wut", Y)
-#Y = distance.euclidean(N_my_property_df[feature_cols], normal_city_listings.iloc[0][feature_cols])
-#print("Hey",Y)
-
 #choose columns you want to take into account for the purpose of calculating the price
 feature_cols = ["N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_number_of_reviews", "N_review_scores_rating", "N_latitude", "N_longitude"]
 
 
 def predict_price_multivariate(row, test_item):
     distance_series = distance.euclidean(test_item, row)
-    #d_sorted = distance_series.sort_values()
-    #temp_df = temp_df.sort_values('distance')
-    #knn_5 = temp_df["price"].iloc[:5]
-    #predicted_price = knn_5.mean()
     return(distance_series)
-    #lista = []
-    #lista.append(distance.euclidean(test_item, row))
-    #return(lista)
+
 
 N_my_property_df = N_my_property_df[feature_cols]
 selected_normal_city_listings = normal_city_listings[feature_cols]
@@ -115,7 +118,6 @@ predicted_price = int(round(predicted_price*cities_dict[city][0]))
 
 
 print "The price for a 1 night stay in", city, "is", predicted_price, "euro."
-print "In 1 month a host in", city, "can typically make", int(round(predicted_price*30*cities_dict[city][1]*0.75)), "euro."
+print "In 1 month a host in", city, "typically makes", int(round(predicted_price*30*cities_dict[city][1])), "euro."
 print "Monthly rent in", city, "is typically", int(round(cities_dict[city][2])),"euro."
-print "Figures above correspond to hosts' earnings before tax."
 

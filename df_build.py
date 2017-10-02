@@ -4,13 +4,14 @@ from scipy.spatial import distance
 import sys
 import json
 
-columns = ["price", "room_type", "accommodates", "bedrooms", "bathrooms", "beds", "number_of_reviews", "latitude", "longitude", "review_scores_rating"]
+columns = ["price", "room_type", "accommodates", "bedrooms", "bathrooms", "beds", "number_of_reviews", "latitude", "longitude", "review_scores_value"]
 
 #load cities' information
 with open('cities_dictionary.json') as json_data:
     cities_dict = json.load(json_data)
 
 del cities_dict['EXAMPLE']
+
 
 city_list = []
 for key in cities_dict:
@@ -19,15 +20,34 @@ print city_list
 
 info_dict = {}
 
-for cities in city_list:
-
-    city = cities
-
+for city in city_list:
+    
     #upload data
-    city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+    try:
+        city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+    except Exception:
+        if city == "HONG KONG":
+            city = "HK"
+            city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+            city = "HONG KONG"
+        if city == "LOS ANGELES":
+            city = "LA"
+            city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+            city = "LOS ANGELES"
+        if city == "SAN FRANCISCO":
+            city = "SF"
+            city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+            city = "SAN FRANCISCO"
+
 
     #select relevant columns from the data
     city_listings = city_listings[columns]
+
+    #number reviews mean
+    reviews_mean = float(city_listings["number_of_reviews"].mean())
+
+    #average review score
+    score_mean = float(city_listings["review_scores_value"].mean())
 
     #drop room types that are not well formatted
     TF = (city_listings["room_type"] == "Entire home/apt") | (city_listings["room_type"] == "Private room")
@@ -48,13 +68,13 @@ for cities in city_list:
         N_items = "N_"+items
         city_listings[N_items] = (city_listings[items] - mean) / std
 
-    N_columns = ["price", "N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_number_of_reviews", "N_latitude", "N_longitude", "N_review_scores_rating"]
+    N_columns = ["price", "N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_number_of_reviews", "N_latitude", "N_longitude", "N_review_scores_value"]
 
     #drop old columns
     normal_city_listings = city_listings[N_columns]
 
 
-    my_property = {"room_type": [1.0,],"accommodates": [2.0,], "bedrooms": [1.0,], "bathrooms": [1.0,], "beds": [1.0,], "number_of_reviews": [100.0,], "latitude": [37.98463566,], "longitude": [23.7370348,], "review_scores_rating": [95.0,]}
+    my_property = {"room_type": [1.0,],"accommodates": [2.0,], "bedrooms": [1.0,], "bathrooms": [1.0,], "beds": [1.0,], "number_of_reviews": [reviews_mean,], "latitude": [37.98463566,], "longitude": [23.7370348,], "review_scores_value": [score_mean,]}
 
     #"latitude": [37.98463566,], "longitude": [23.7370348,]
 
@@ -78,7 +98,7 @@ for cities in city_list:
 
 
     #choose the features you want to be taken into account
-    feature_cols = ["N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_review_scores_rating"]
+    feature_cols = ["N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_number_of_reviews", "N_review_scores_value"]
 
     N_my_property_df = N_my_property_df[feature_cols]
     selected_normal_city_listings = normal_city_listings[feature_cols]
@@ -94,7 +114,7 @@ for cities in city_list:
         normal_city_listings["latitude"] = (normal_city_listings["N_latitude"]*lat_std)+lat_avg
 
     #set parameter for k-nearest
-    k = 10
+    k = 6
 
     knn = normal_city_listings.iloc[:k]
 
@@ -109,8 +129,6 @@ for cities in city_list:
     info_dict[city].append(int(round(cities_dict[city][2])))
     info_dict[city].append(int(round(cities_dict[city][3])))
 
-print info_dict
-
 data_types = ["Airbnb 1 day", "Airbnb 1 month", "Regular 1 month", "Salary 1 month"]
 
 df=pd.DataFrame.from_items(info_dict.iteritems(), 
@@ -118,6 +136,8 @@ df=pd.DataFrame.from_items(info_dict.iteritems(),
                             columns=data_types)
 
 df.sort_index(inplace=True)
+
+print df
 
 df.to_csv('city_results.csv', index=True)
 

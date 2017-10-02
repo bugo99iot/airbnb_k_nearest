@@ -5,7 +5,7 @@ import sys
 import json
 import math
 
-columns = ["price", "room_type", "accommodates", "bedrooms", "bathrooms", "beds", "number_of_reviews", "latitude", "longitude", "review_scores_rating"]
+columns = ["price", "room_type", "accommodates", "bedrooms", "bathrooms", "beds", "number_of_reviews", "latitude", "longitude", "review_scores_value"]
 
 #load cities' information
 with open('cities_dictionary.json') as json_data:
@@ -17,7 +17,21 @@ del cities_dict['EXAMPLE']
 city = "ATHENS"
 
 #upload data
-city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+try:
+    city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+except Exception:
+    if city == "HONG KONG":
+        city = "HK"
+        city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+        city = "HONG KONG"
+    if city == "LOS ANGELES":
+        city = "LA"
+        city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+        city = "LOS ANGELES"
+    if city == "SAN FRANCISCO":
+        city = "SF"
+        city_listings = pd.read_csv("DATA/raw/" + city + "_listings.csv")
+        city = "SAN FRANCISCO"
 
 #select relevant columns from the data
 city_listings = city_listings[columns]
@@ -53,7 +67,7 @@ for items in columns[1:]:
     N_items = "N_"+items
     city_listings[N_items] = (city_listings[items] - mean) / std
 
-N_columns = ["price", "N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_number_of_reviews", "N_latitude", "N_longitude", "N_review_scores_rating"]
+N_columns = ["price", "N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_number_of_reviews", "N_latitude", "N_longitude", "N_review_scores_value"]
 
 #drop old columns
 normal_city_listings = city_listings[N_columns]
@@ -63,14 +77,14 @@ test_set = normal_city_listings.iloc[2888:]
 
 
 #choose columns you want to take into account for the purpose of calculating the price
-feature_cols = ["N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds"]
+feature_cols = ["N_room_type", "N_accommodates", "N_bedrooms", "N_bathrooms", "N_beds", "N_latitude", "N_longitude", "N_review_scores_value", "N_number_of_reviews"]
 
 train_set_f = train_set[feature_cols]
 test_set_f = test_set[feature_cols]
 
 standard_deviation = 0
 
-k = 10
+k = 5
 
 aces = 0
 
@@ -85,8 +99,6 @@ for index, rows in test_set_f.iterrows():
     train_set = train_set.assign(distance=distance_series)
 
     train_set.sort_values("distance", inplace=True)
-
-    #set parameter for k-nearest
 
     knn = train_set.iloc[:k]
 

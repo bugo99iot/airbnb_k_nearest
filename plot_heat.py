@@ -30,8 +30,8 @@ feature_cols = ["Room type", "Accommodates", "Bedrooms", "Bathrooms", "Beds", "N
 
 #print df.head(5)
 
-del df["Review scores"]
-del df["Number of reviews"]
+#del df["Review scores"]
+#del df["Number of reviews"]
 
 df.sort_index(inplace=True)
 
@@ -43,10 +43,11 @@ print values
 
 plt.style.use('ggplot')
 
-sns.heatmap(df, annot=False, cmap="YlGnBu", vmax = 0.35)
+sns.heatmap(df, annot=False, cmap="YlGnBu", vmax = 0.45)
+#vmax=0.0000000000000005
 #vmin = 0.00000000000000000000011, vmax = 0.00000000000000011
-plt.matplotlib.rcParams.update({'font.size': 34})
-plt.suptitle("k = 100 heat map", fontsize=36, fontweight='bold')
+plt.matplotlib.rcParams.update({'font.size': 34}, )
+plt.suptitle("k = 300 heat map", fontsize=36, fontweight='bold')
 rotation="vertical"
 
 plt.rcParams["font.family"] = "cursive"

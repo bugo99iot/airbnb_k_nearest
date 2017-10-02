@@ -29,7 +29,7 @@ ax.set_xticklabels(list(df.index.values), rotation="vertical")
 plt.tight_layout()
 
 ax.set_ylabel('Amount in Euro', **hfont)
-plt.suptitle("Should you rent out your flat to tourists or locals?", fontsize=36, fontweight='bold', **csfont)
+plt.suptitle("Tourists vs. locals: what's more profitable?", fontsize=36, fontweight='bold', **csfont)
 
 plt.rcParams["font.family"] = "cursive"
 
